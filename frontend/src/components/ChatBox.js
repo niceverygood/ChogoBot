@@ -60,6 +60,16 @@ const ChatBox = () => {
     await handleSendMessage(question);
   };
 
+  // API URL 설정 (환경에 따라 자동 감지)
+  const getApiUrl = () => {
+    // 개발 환경에서는 localhost 사용
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return 'http://localhost:3003';
+    }
+    // 프로덕션 환경에서는 EC2 주소 사용
+    return 'http://3.107.198.3:3003';
+  };
+
   // 공통 메시지 전송 로직
   const handleSendMessage = async (messageContent) => {
     if (!messageContent.trim() || isLoading) return;
@@ -75,7 +85,8 @@ const ChatBox = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
+      const apiUrl = getApiUrl();
+      const response = await fetch(`${apiUrl}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
